@@ -1,0 +1,46 @@
+#数据源配置
+druid:
+  datasource:
+    url: jdbc:mysql://47.104.195.111:3306/ibos?useUnicode:true&amp;characterEncoding:UTF8&amp;allowMultiQueries:true&amp;rewriteBatchedStatements:true&amp;zeroDateTimeBehavior:convertToNull
+    username: pinsoonprod
+    password: pinsoonprod001!
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    initial-size: 100
+    max-active: 500
+    min-idle: 100
+
+mybatis:
+  page-helper:
+    dialect: mysql
+  mapper-locations: classpath*:mapper/*Mapper.xml
+
+# DUBBO 配置
+dubbo:
+  application:
+    name: app-ace-cms
+  annotation:
+    package-name: com.xqcx.cms
+  protocol:
+    port: -1
+  provider:
+    validation: true
+  registry:
+    registries[0]:
+      name: registry_ace
+      address: 47.104.195.111:2181
+      group: ace
+  consumer:
+    timeout: 3000
+
+redis:
+  redis-address: 47.104.195.111:8888
+  password: qwert12345plm,?!999
+  max-total: 500
+  max-idle: 200
+  min-Idle: 50
+  timeout: 3000
+  max-attempts: 5
+  min-evictable-idle-time-millis: 100000
+  num-tests-per-eviction-run: 1024
+  time-between-eviction-runs-millis: 30000

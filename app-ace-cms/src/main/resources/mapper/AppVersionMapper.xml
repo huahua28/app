@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.ace.cms.mapper.AppVersionMapper">
+    <resultMap id="versionMap" type="com.ace.cms.dto.AppVersionDto">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="app_version" property="appVersion" jdbcType="VARCHAR"/>
+        <result column="app_type" property="appType" jdbcType="VARCHAR"/>
+        <result column="app_url" property="appUrl" jdbcType="VARCHAR"/>
+        <result column="is_force" property="isForce" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="min_version" property="minVersion" jdbcType="INTEGER"/>
+        <result column="align_type" property="alignType" jdbcType="INTEGER"/>
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Column_List">
+        id,
+        app_version,
+        app_type,
+        app_url,
+        is_force,
+        status,
+        content,
+        min_version,
+        align_type,
+        created_time,
+        updated_time
+    </sql>
+
+    <select id="selectByAppType" parameterType="java.lang.String" resultMap="versionMap">
+        SELECT
+        <include refid="Column_List"/>
+        FROM  jc_app_version
+        WHERE app_type = #{appType,jdbcType=VARCHAR}
+        AND  status=1
+    </select>
+
+</mapper>

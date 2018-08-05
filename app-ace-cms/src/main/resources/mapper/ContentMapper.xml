@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ace.cms.mapper.ContentMapper">
+
+    <select id="getListByChannelId" resultType="com.ace.cms.dto.ContentDto">
+        SELECT
+			t1.content_id as contentId,
+            t1.user_id as authorId,
+            t1.is_recommend as isRecommend,
+            ifnull(t2.txt,'') as txt,
+            t1.comments_day as commentsDay
+        FROM
+					jc_content t1
+        LEFT JOIN jc_content_txt t2 ON t1.content_id = t2.content_id
+        WHERE
+            t1.channel_id = #{channelId,jdbcType=BIGINT}
+            AND t1.`status` = 2
+            order by t1.sort_date desc,t1.content_id desc
+            limit #{start,jdbcType=BIGINT}, #{pageSize,jdbcType=BIGINT}
+    </select>
+	<select id="getPersonalListByChannelId" resultType="com.ace.cms.dto.ContentDto">
+        SELECT
+			t1.content_id as contentId,
+            t1.user_id as authorId,
+            t1.is_recommend as isRecommend,
+            ifnull(t2.txt,'') as txt,
+            t1.comments_day as commentsDay
+        FROM
+					jc_content t1
+        LEFT JOIN jc_content_txt t2 ON t1.content_id = t2.content_id
+        WHERE
+            t1.channel_id = #{channelId,jdbcType=BIGINT}
+            AND t1.`status` = 2
+            AND t1.user_id=#{userId,jdbcType=BIGINT}
+            order by t1.sort_date desc,t1.content_id desc
+            limit #{start,jdbcType=BIGINT}, #{pageSize,jdbcType=BIGINT}
+    </select>
+    <select id="getByContentId" resultType="com.ace.cms.dto.ContentDto">
+        SELECT
+        t1.content_id as contentId,
+        t1.user_id as authorId,
+        t1.is_recommend as isRecommend,
+        ifnull(t2.txt,'') as txt,
+        t1.comments_day as commentsDay
+        FROM
+        jc_content t1
+        LEFT JOIN jc_content_txt t2 ON t1.content_id = t2.content_id
+        WHERE
+        t1.content_id = #{contentId,jdbcType=BIGINT}
+        AND t1.`status` = 2
+        limit 1
+    </select>
+
+    <update id="addComments">
+        UPDATE jc_content
+        SET comments_day = comments_day + 1
+        WHERE
+            content_id = #{contentId,jdbcType=BIGINT}
+
+    </update>
+
+    <insert id="insert" parameterType="com.ace.cms.dto.ContentDto">
+        INSERT INTO `jc_content` (
+            `content_id`,
+            `channel_id`,
+            `user_id`,
+            `type_id`,
+            `model_id`,
+            `site_id`,
+            `is_recommend`,
+            <if test="status != null and status !='' ">
+                `status`,
+            </if>
+            `sort_date`
+        )
+        VALUES
+            (
+                #{contentId,jdbcType=BIGINT},
+                #{channelId,jdbcType=BIGINT},
+                #{userId,jdbcType=BIGINT},
+                #{typeId,jdbcType=BIGINT},
+                #{modelId,jdbcType=BIGINT},
+                #{siteId,jdbcType=BIGINT},
+                #{isRecommend,jdbcType=BIGINT},
+                <if test="status != null and status !='' ">
+                    #{status,jdbcType=BIGINT},
+                </if>
+                <choose>
+                    <when test="sortDate != null">
+                        #{sortDate,jdbcType=TIMESTAMP}
+                    </when>
+                    <otherwise>
+                        CURRENT_TIMESTAMP
+                    </otherwise>
+                </choose>
+            )
+    </insert>
+
+    <select id="getListByName" resultType="com.ace.cms.dto.ContentDto">
+        SELECT
+        t1.content_id as contentId,
+        t1.user_id as authorId,
+        t1.is_recommend as isRecommend,
+        ifnull(t2.txt1,'') as txt1,
+        ifnull(t3.title,'') as title,
+        t1.comments_day as commentsDay
+        FROM
+        jc_content t1
+        LEFT JOIN jc_content_txt t2 ON t1.content_id = t2.content_id
+        LEFT JOIN jc_content_ext t3 ON t1.content_id = t3.content_id
+        WHERE t1.channel_id in
+        <foreach collection="list" item="channel" index="index"
+                 open="(" close=")" separator=",">
+            #{channel.channelId}
+        </foreach>
+        AND t3.title like concat('%', #{name}, '%')
+        AND t1.`status` = 2
+        order by t1.sort_date desc,t1.content_id desc
+        limit #{start,jdbcType=BIGINT}, #{pageSize,jdbcType=BIGINT}
+    </select>
+
+    <select id="homePage" resultType="com.ace.cms.dto.ContentDto">
+        SELECT
+        t1.content_id as contentId,
+        t1.user_id as authorId,
+        t1.is_recommend as isRecommend,
+        ifnull(t2.txt1,'') as txt1,
+        ifnull(t3.title,'') as title,
+        t1.comments_day as commentsDay
+        FROM
+        jc_content t1
+        LEFT JOIN jc_content_txt t2 ON t1.content_id = t2.content_id
+        LEFT JOIN jc_content_ext t3 ON t1.content_id = t3.content_id
+        WHERE
+        t1.channel_id = #{channelId,jdbcType=BIGINT}
+        AND t1.`status` = 2
+        order by t1.sort_date desc,t1.content_id desc
+        limit #{start,jdbcType=BIGINT}, #{pageSize,jdbcType=BIGINT}
+    </select>
+
+    <select id="getNewsByContentId" resultType="com.ace.cms.dto.ContentDto">
+        SELECT
+        t1.content_id as contentId,
+        t1.user_id as authorId,
+        t1.is_recommend as isRecommend,
+        t1.sort_date as sortDate,
+        t1.channel_id as channelId,
+        ifnull(t2.txt1,'') as txt1,
+        ifnull(t3.title,'') as title,
+        t1.comments_day as commentsDay
+        FROM
+        jc_content t1
+        LEFT JOIN jc_content_txt t2 ON t1.content_id = t2.content_id
+        LEFT JOIN jc_content_ext t3 ON t1.content_id = t3.content_id
+        WHERE
+        t1.content_id = #{contentId,jdbcType=BIGINT}
+        AND t1.`status` = 2
+        limit 1
+    </select>
+
+    <insert id="saveContentExe">
+        INSERT INTO `jc_content_ext` (
+        `content_id`,
+        release_date,
+        `title`
+        )
+        VALUES
+        (
+        #{contentId,jdbcType=BIGINT},
+        CURRENT_TIMESTAMP,
+        #{title,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <insert id="saveContentTxt">
+        INSERT INTO `jc_content_txt` (
+        `content_id`,
+        `txt`,
+        `txt1`
+        )
+        VALUES
+        (
+        #{contentId,jdbcType=BIGINT},
+        #{txt,jdbcType=VARCHAR},
+        #{txt1,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <insert id="saveContentChannel">
+        INSERT INTO `jc_content_channel` (
+        `content_id`,
+        `channel_id`
+        )
+        VALUES
+        (
+        #{contentId,jdbcType=BIGINT},
+        #{channelId,jdbcType=BIGINT}
+        )
+    </insert>
+
+    <insert id="saveContentCheck">
+        INSERT INTO `jc_content_check` (
+        `content_id`,
+        `check_step`,
+        `is_rejected`
+        )
+        VALUES
+        (
+        #{contentId,jdbcType=BIGINT},
+        #{checkStep,jdbcType=BIGINT},
+        #{isRejected,jdbcType=BIGINT}
+        )
+    </insert>
+</mapper>

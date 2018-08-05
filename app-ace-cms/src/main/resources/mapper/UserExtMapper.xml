@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ace.cms.mapper.UserExtMapper">
+
+    <insert id="insert" parameterType="com.ace.cms.dto.UserExtDto">
+        insert into jc_user_ext (
+        user_id,
+        gender,
+        mobile,
+        user_img)
+        values (
+        #{userId,jdbcType=INTEGER},
+        #{gender,jdbcType=INTEGER},
+        #{mobile,jdbcType=VARCHAR},
+        #{userImg,jdbcType=VARCHAR})
+    </insert>
+</mapper>

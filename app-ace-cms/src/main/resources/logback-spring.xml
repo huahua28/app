@@ -1,0 +1,54 @@
+<!-- Logback configuration. See http://logback.qos.ch/manual/index.html -->
+<configuration>
+	<!-- 控制台输出，格式：日期 [日志级别] [短类名：行号] - 日志信息 -->
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%date [%-5p] [%F:%L] - %m%n</pattern>
+		</layout>
+	</appender>
+	
+	<!-- INFO及以上级别日志输出到指定目录，格式：日期 [日志级别] [短类名：行号] - 日志信息 -->
+	<!-- 文件路径可配，文件名：default.log，超过500M后，划分文件变成“default-日期.0.log -->
+	<appender name="D" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>/home/admin/project/logs/${project.artifactId}/default.log</File>
+        <encoder>
+            <Pattern>%date [%-5p] [%F:%L] - %m%n</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/home/admin/project/logs/${project.artifactId}/default-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>180</maxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>500MB</maxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+	</appender>
+	
+	<!-- ERROR级别日志输出到指定目录，格式：日期 [日志级别] [短类名：行号] - 日志信息 -->
+	<!-- 文件路径可配，文件名：default-error.log，超过500M后，划分文件变成“default-error-日期.0.log -->
+	<appender name="E" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <File>/home/admin/project/logs/${project.artifactId}/default-error.log</File>
+        <encoder>
+            <Pattern>%date [%-5p] [%F:%L] - %m%n</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/home/admin/project/logs/${project.artifactId}/default-error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>180</maxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>500MB</maxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter"> 
+            <level>ERROR</level> 
+        </filter> 
+	</appender>
+
+
+	<!-- 设置log4j输出级别 -->
+	<root level="info">
+		<appender-ref ref="stdout" />
+		<appender-ref ref="D" />
+		<appender-ref ref="E" />
+	</root>
+</configuration>

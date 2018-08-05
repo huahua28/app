@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ace.cms.mapper.UserMapper">
+
+    <select id="getUserInfo" resultType="com.ace.cms.dto.UserDto">
+        SELECT
+            t1.user_id as userId,
+            ifnull(t1.username,'') as username,
+	        ifnull(t2.user_img,'') as userImg
+        FROM
+            jc_user t1
+        LEFT JOIN jc_user_ext t2 ON t1.user_id = t2.user_id
+        WHERE
+            t1.user_id = #{authorId,jdbcType=BIGINT}
+    </select>
+    <select id="getUserExtInfo" resultType="com.ace.cms.dto.UserExtDto">
+        SELECT
+            t1.user_id as userId,
+            ifnull(t1.gender,1) as gender
+        FROM
+            jc_user_ext t1 
+        WHERE
+            t1.user_id = #{userId,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectByMobile" resultType="com.ace.cms.dto.UserDto">
+        SELECT
+        t1.user_id as userId,
+        ifnull(t1.username,'') as userName,
+        ifnull(t2.user_img,'') as userImg
+        FROM
+        jc_user t1
+        LEFT JOIN jc_user_ext t2 ON t1.user_id = t2.user_id
+        WHERE
+        t2.mobile = #{mobile,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByName" resultType="com.ace.cms.dto.UserDto">
+        SELECT
+        t1.user_id as userId,
+        ifnull(t1.username,'') as userName,
+        ifnull(t2.user_img,'') as userImg
+        FROM
+        jc_user t1
+        LEFT JOIN jc_user_ext t2 ON t1.user_id = t2.user_id
+        WHERE
+        t1.username = #{name,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectBySessionId" resultType="com.ace.cms.dto.UserDto">
+        SELECT
+        t1.user_id as userId,
+        t1.password as password,
+        ifnull(t1.username,'') as userName,
+        ifnull(t1.session_id,'') as sessionId
+        FROM
+        jc_user t1
+        WHERE
+        t1.session_id = #{sessionId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByMobileAndPassword" resultType="com.ace.cms.dto.UserDto">
+        SELECT
+        t1.user_id as userId,
+        ifnull(t1.username,'') as userName,
+        ifnull(t2.user_img,'') as userImg,
+        ifnull(t1.session_id,'') as sessionId
+        FROM
+        jc_user t1
+        LEFT JOIN jc_user_ext t2 ON t1.user_id = t2.user_id
+        WHERE
+        t2.mobile = #{mobile,jdbcType=VARCHAR}
+        and t1.password = #{password,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByNameAndPassword" resultType="com.ace.cms.dto.UserDto">
+        SELECT
+        t1.user_id as userId,
+        ifnull(t1.username,'') as userName,
+        ifnull(t2.user_img,'') as userImg,
+        ifnull(t1.session_id,'') as sessionId
+        FROM
+        jc_user t1
+        LEFT JOIN jc_user_ext t2 ON t1.user_id = t2.user_id
+        WHERE
+        t1.username = #{name,jdbcType=VARCHAR}
+        and t1.password = #{password,jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateSessionByUserId">
+        update jc_user set session_id =  #{sessionId,jdbcType=VARCHAR}
+        where user_id = #{userId,jdbcType=BIGINT}
+    </update>
+    
+
+    <update id="forgetPassword">
+        update jc_user set password =  #{password,jdbcType=VARCHAR}
+        where user_id = #{userId,jdbcType=BIGINT}
+    </update>
+
+    <insert id="insert" parameterType="com.ace.cms.dto.UserDto">
+        insert into jc_user (
+        user_id,
+        group_id,
+        username,
+        password,
+        register_time,
+        last_login_time,
+        login_count)
+        values (
+        #{userId,jdbcType=INTEGER},
+        #{groupId,jdbcType=INTEGER},
+        #{username,jdbcType=VARCHAR},
+        #{password,jdbcType=CHAR},
+        CURRENT_TIMESTAMP ,
+        CURRENT_TIMESTAMP,
+        1)
+    </insert>
+
+	<select id="findTagByUserId" resultType="com.ace.cms.vo.user.UserTag">
+        SELECT 
+			t1.tag_id as tagId,
+            t2.tag as tag,
+            t1.count as count,
+            t1.user_id as userId
+		From jc_user_tag t1
+        LEFT JOIN jc_tag t2
+        ON t1.tag_id=t2.id
+        WHERE t1.user_id=#{userId,jdbcType=BIGINT}
+		AND t1.status!=-1
+    </select>
+    
+    <select id="findTagStatusByUserId" resultType="com.ace.cms.vo.user.UserTag">
+        SELECT
+        	t1.tag_id as tagId,
+        	t3.tag as tag,
+        	t1.count as count,
+        	if (t2.relation_id is null, 0 , 1) as isLight,
+        	t1.user_id as userId
+        FROM
+            jc_user_tag t1
+        LEFT JOIN (select relation_id from jc_tag_light_log  where user_id=#{viewerId,jdbcType=BIGINT}) t2
+        on t1.id = t2.relation_id
+        LEFT JOIN jc_tag t3 on t1.tag_id=t3.id
+        WHERE
+            t1.user_id = #{vieweeId,jdbcType=BIGINT}
+            and t1.status!=-1
+    </select>
+    
+    <select id="findTagLog" resultType="com.ace.cms.vo.user.TagLog">
+        SELECT
+        	t1.user_id as userId,
+        	date_format(t1.updateTime, '%Y-%m-%d %h:%i:%s' ) as updateTime,
+        	ifnull(t2.username,'') as username,
+        	ifnull(t3.user_img,'') as userImg
+        FROM
+            jc_tag_light_log  t1
+        LEFT JOIN jc_user t2 on t1.user_id = t2.user_id
+        LEFT JOIN jc_user_ext t3 ON t2.user_id = t3.user_id
+        WHERE
+            t1.relation_id =(select id from jc_user_tag where 
+            tag_id= #{tagId,jdbcType=BIGINT} and user_id=#{userId,jdbcType=BIGINT})
+        ORDER BY t1.updateTime desc
+    </select>
+
+
+ 	<resultMap type="com.ace.cms.vo.user.UserTag" id="userTagResult">
+        <id column="tagId" property="tagId"/>
+        <result column="tag" property="tag"/>
+        <result column="count" property="count"/>
+        <result column="isLight" property="isLight"/>
+        <result column="userId" property="userId"/>
+        <collection column="{tagId=tagId,userId=userId}" property="tagLog" javaType="ArrayList" ofType="com.ace.cms.vo.user.TagLog" select="findTagLog">
+            <result column="userId" property="userId"/>
+            <result column="username" property="username"/>
+            <result column="userImg" property="userImg"/>
+            <result column="updateTime" property="updateTime"/>
+        </collection>
+    </resultMap>
+
+	<select id="findAllTagStatusByUserId" resultMap="userTagResult">
+        SELECT
+        	t1.tag_id as tagId,
+        	t3.tag as tag,
+        	t1.count as count,
+        	if (t2.relation_id is null, 0 , 1) as isLight,
+        	t1.user_id as userId
+        FROM
+            jc_user_tag t1
+        LEFT JOIN (select relation_id from jc_tag_light_log  where user_id=#{viewerId,jdbcType=BIGINT}) t2
+        on t1.id = t2.relation_id
+        LEFT JOIN jc_tag t3 on t1.tag_id=t3.id
+        WHERE
+            t1.user_id = #{vieweeId,jdbcType=BIGINT}
+            and t1.status!=-1
+    </select>
+
+
+
+	<insert id="addUserTag" parameterType="com.ace.cms.vo.user.UserTag">
+        insert into jc_user_tag (
+        user_id,
+        count,
+        tag_id,
+        status,
+        creator,
+        createTime)
+        values (
+        #{userId,jdbcType=BIGINT},
+        0,
+        #{tagId,jdbcType=BIGINT},
+        0,
+        #{creator,jdbcType=BIGINT},
+        CURRENT_TIMESTAMP)
+    </insert>
+     
+     <update id="deleteUserTag">
+        update jc_user_tag set status = -1
+        where tag_id = #{tagId,jdbcType=BIGINT} and user_id=#{userId,jdbcType=BIGINT} 
+        and status!=-1
+    </update>
+    
+	<insert id="addLight" parameterType="com.ace.cms.vo.user.TagLog">
+        insert into jc_tag_light_log (user_id,relation_id,updateTime)
+        select #{operator,jdbcType=BIGINT}, id,CURRENT_TIMESTAMP from jc_user_tag
+        where user_id=#{owner,jdbcType=BIGINT} and tag_id=#{tagId,jdbcType=BIGINT} and status!=-1
+    </insert>
+
+	<delete id="deleteLight" parameterType="com.ace.cms.vo.user.TagLog">  
+	    DELETE FROM jc_tag_light_log WHERE user_id = #{operator,jdbcType=BIGINT} and relation_id=
+	    (select id from jc_user_tag where tag_id= #{tagId,jdbcType=BIGINT} and user_id=#{owner,jdbcType=BIGINT} and status!=-1)
+	</delete> 
+	
+	
+	 <update id="tagCount">
+        update jc_user_tag set count = count + #{num,jdbcType=BIGINT}
+        where tag_id = #{tagId,jdbcType=BIGINT} and user_id = #{userId,jdbcType=BIGINT}
+        and status!=-1
+    </update>
+    
+    <select id="getTagHistory" resultType="com.ace.cms.dto.TagDto">
+        SELECT
+            t1.tag_id as id,
+            t2.tag as tag,
+            t2.count as count
+        FROM
+            jc_user_tag t1
+        LEFT JOIN jc_tag t2 ON t1.tag_id = t2.id
+        WHERE
+            t1.user_id = #{userId,jdbcType=BIGINT}
+    </select>
+    
+     <update id="updateUsername">
+        update jc_user set username = #{username,jdbcType=VARCHAR}
+        where user_id = #{userId,jdbcType=BIGINT} 
+    </update>
+    <update id="updateGender">
+        update jc_user_ext set gender = #{gender,jdbcType=INTEGER}
+        where user_id = #{userId,jdbcType=BIGINT} 
+    </update>
+    
+    <update id="updateUserImg">
+        update jc_user_ext set user_img=#{userImg,jdbcType=VARCHAR}
+        where user_id = #{userId,jdbcType=BIGINT} 
+    </update>
+</mapper>

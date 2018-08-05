@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ace.cms.mapper.AuthenticationMapper">
+
+    <insert id="insert" parameterType="com.ace.cms.dto.AuthenticationDto">
+        insert into jc_authentication(
+        `user_id`,
+        `card_id`,
+        `card_name`,
+        `facade_img`,
+        `back_img`,
+        `login_time`,
+        `update_time`
+        ) VALUES (
+          #{userId,jdbcType=BIGINT},
+          #{cardId,jdbcType=VARCHAR},
+          #{cardName,jdbcType=VARCHAR},
+          #{facadeImg,jdbcType=VARCHAR},
+          #{backImg,jdbcType=VARCHAR},
+          CURRENT_TIMESTAMP,
+          CURRENT_TIMESTAMP
+        )
+    </insert>
+
+    <select id="selectByUserId" resultType="com.ace.cms.dto.AuthenticationDto">
+        SELECT
+            user_id as userId,
+            card_id as cardId,
+            card_name as cardName,
+            facade_img AS facadeImg,
+            back_img AS backImg,
+            login_time AS loginTime
+        FROM
+            jc_authentication
+        WHERE
+            user_id =
+    </select>
+
+</mapper>

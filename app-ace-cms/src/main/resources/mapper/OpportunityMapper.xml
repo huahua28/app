@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ace.cms.mapper.OpportunityMapper">
+
+    <select id="getList" resultType="com.ace.cms.dto.OpportunityDto">
+        select t1.opportunity_id as opportunityId,
+        t1.user_id as userId,
+        t1.create_time as createTime,
+        t1.logo as logo,
+        t1.title as title,
+        t1.locale as locale,
+        t1.direction as direction,
+        t1.stage as stage
+        from jc_opportunity t1 
+        order by t1.create_time desc,t1.opportunity_id desc
+        limit #{start,jdbcType=BIGINT}, #{pageSize,jdbcType=BIGINT}
+    </select>
+    
+	<select id="getDetail" resultType="com.ace.cms.dto.OpportunityDto">
+	        select t1.opportunity_id as opportunityId,
+	        t1.user_id as userId,
+	        t1.create_time as createTime,
+	        t1.logo as logo,
+	        t1.title as title,
+	        t1.locale as locale,
+	        t1.direction as direction,
+	        t1.stage as stage,
+	        t1.highlight as highlight,
+	        t1.description as description,
+	        t1.member as member,
+	        t1.money as money,
+	        t1.recruitment as recruitment,
+	        t1.pic1 as pic1,
+	        t1.pic2 as pic2,
+	        t1.pic3 as pic3,
+	        t1.url1 as url1,
+	        t1.url2 as url2,
+	        t1.url3 as url3,
+	        t1.finish_time as finishTime,
+	        t1.price as price
+	        from jc_opportunity t1 
+	        where t1.opportunity_id=#{opportunityId,jdbcType=BIGINT}
+	    </select>
+
+</mapper>
+
+<!-- create table jc_opportunity(
+	opportunity_id int(11) NOT NULL AUTO_INCREMENT,
+    user_id int(11) NOT NULL COMMENT '发起人',
+    create_time datetime NOT NULL COMMENT '发起时间',
+    logo varchar(256) COMMENT '图标',
+    title varchar(100) NOT NULL COMMENT '名称',
+    locale int(4) NOT NULL COMMENT '地区',
+    direction int(1) NOT NULL COMMENT '方向',
+    stage int(1) NOT NULL COMMENT '阶段 1有个好主意 2产品研发中心 3市场运营',
+    highlight varchar(100) COMMENT '亮点',
+    description varchar(1000) NOT NULL COMMENT '描述',
+    member int(1) COMMENT '人数 1:1人 2:2-5人 3:6-10人 4:11-50人 5:51-100人 6:100人以上',
+    finance int(1) COMMENT '融资 1等待投资 2个人出资 3种子投资 4天使投资 5A轮融资 6B轮融资 7C轮融资',
+    money float COMMENT '金额',
+    recruitment varchar(20) COMMENT '招聘 1技术合伙人 2营销合伙人 3运营合伙人 4设计合伙人 5产品合伙人',
+    pic1 varchar(256) COMMENT '图片1',
+    pic2 varchar(256) COMMENT '图片2',
+    pic3 varchar(256) COMMENT '图片3',
+    url1 varchar(256) COMMENT '链接1',
+    url2 varchar(256) COMMENT '链接2',
+    url3 varchar(256) COMMENT '链接3',
+	finish_time datetime COMMENT '交付时间',
+	price float COMMENT '价格',
+    PRIMARY KEY (`opportunity_id`)
+); -->

@@ -1,0 +1,32 @@
+project.name: app-ace-cms
+spring.profiles.active: dev
+server.port: 9082
+server.contextPath: /cms/api/front
+#server.ssl.key-store: classpath:keystore.p12
+#server.ssl.key-store-password: gitblit
+#server.ssl.keyStoreType: PKCS12
+
+spring:
+  cas:
+    server-name: http://localhost:9082
+    validate-filters: /*  
+    sign-out-filters: /logout  
+    cas-server-url-prefix: http://122.112.2.54:8089/cas/ 
+    use-session: true  
+    redirect-after-validation: true  
+    auth-filters: /cas-login  
+    request-wrapper-filters: /*  
+    cas-server-login-url: http://122.112.2.54:8089/cas/login  
+    assertion-filters: /*
+
+xxl:
+  job:
+    accessToken:
+    admin:
+    addresses: http://47.104.195.111:8080/xxl-job-admin
+    executor:
+      appname: xxl-job-executor-sample
+      ip:
+      port: 9999
+      logpath: /data/applogs/xxl-job/jobhandler
+      logretentiondays: -1

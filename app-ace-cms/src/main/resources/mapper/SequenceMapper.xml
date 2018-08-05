@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ace.cms.mapper.SequenceMapper">
+
+    <update id="updateSequence">
+    	UPDATE
+    		sys_sequence
+    	SET 
+    		current_value = current_value + #{length}
+    	WHERE 
+    		name = #{name} AND current_value = #{currentValue}
+    </update>
+    
+    <select id="getSequence" resultType="com.ace.cms.cache.model.SequenceDefination">
+    	SELECT
+    		name, current_value currentValue, increment, cache 
+    	FROM 
+    		sys_sequence
+    	WHERE 
+    		name=#{name}
+    </select>
+
+	<select id="getAllSequence" resultType="com.ace.cms.cache.model.SequenceDefination">
+		SELECT
+		name, current_value currentValue, increment, cache
+		FROM
+		sys_sequence
+	</select>
+
+	<insert id="insertSequence">
+		INSERT INTO sys_sequence (name)
+		VALUES (#{name})
+	</insert>
+
+
+
+</mapper>

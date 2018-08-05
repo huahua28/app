@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ace.cms.mapper.ChannelUserMapper">
+
+    <insert id="insert">
+        INSERT INTO jc_channel_user
+        (
+        `channel_id`,
+        `user_id`
+        ) VALUES
+        (
+        #{channelId,jdbcType=BIGINT},
+        #{userId,jdbcType=BIGINT}
+        )
+
+    </insert>
+
+    <select id="count" resultType="java.lang.Integer">
+        SELECT
+            count(1)
+        FROM
+            jc_channel_user
+        WHERE
+            channel_id = #{channelId,jdbcType=BIGINT}
+        AND
+            user_id = #{userId,jdbcType=BIGINT}
+    </select>
+
+
+</mapper>

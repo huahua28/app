@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ace.cms.mapper.UserTagMapper">
+
+    <select id="getUserTagInfo" resultType="com.ace.cms.dto.UserTagDto">
+        SELECT
+            t1.user_id as userId,
+            t1.count,
+	        ifnull(t2.tag,'') as tag
+        FROM
+            jc_user_tag t1
+        LEFT JOIN jc_tag t2 on t1.tag_id = t2.id
+        WHERE
+            t1.user_id = #{authorId,jdbcType=BIGINT}
+    </select>
+
+
+</mapper>

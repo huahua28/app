@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ace.cms.mapper.SensitivityMapper">
+
+    <select id="getList" resultType="com.ace.cms.dto.SensitivityDto">
+        select t1.sensitivity_id as sensitivityId,
+        t1.search as search,
+        t1.replacement as replacement
+        from jc_sensitivity t1
+    </select>
+
+
+</mapper>

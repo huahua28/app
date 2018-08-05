@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ace.cms.mapper.ReptilianNewsMapper">
+
+    <select id="get" resultType="com.ace.cms.dto.ReptilianNewsDto">
+        SELECT
+        	t1.other_id as otherId,
+        	t1.title as title,
+        	t1.type as type,
+        	t1.context as context,
+        	t1.pic_url as picUrl,
+        	t1.publish_time as publishTime
+        FROM
+            jc_reptilian_news t1
+        WHERE t1.publish_time >= '2018-07-17'
+    </select>
+
+</mapper>
